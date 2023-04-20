@@ -15,6 +15,10 @@ const physics = (entities, { touches, time, dispatch }) => {
     });
 
   for (let index = 1; index <= 2; index++) {
+    if (entities[`ObstacleTop${index}`].body.bounds.max.x <= 40) {
+      dispatch({ type: "new_point" });
+    }
+
     if (entities[`ObstacleTop${index}`].body.bounds.max.x <= 0) {
       const pipeSizePos = getPipeSizeAndPos(width * 0.9);
 

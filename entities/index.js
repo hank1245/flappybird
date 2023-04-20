@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get("window");
 export default (restart) => {
   let engine = Matter.Engine.create({ enableSleeping: false });
   let world = engine.world;
-  engine.gravity.y = 0.9;
+  engine.gravity.y = 0.91;
   const pipeSizeAndPos1 = getPipeSizeAndPos();
   const pipeSizeAndPos2 = getPipeSizeAndPos(width * 0.9);
 
