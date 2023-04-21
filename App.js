@@ -14,7 +14,6 @@ export default function App() {
     setRunning(false);
   }, []);
   const debounced = _.debounce((e) => {
-    console.log(e);
     switch (e.type) {
       case "game over":
         setRunning(false);
