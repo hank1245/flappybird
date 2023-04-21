@@ -1,8 +1,8 @@
 import Matter from "matter-js";
-import Bird from "../components/Bird";
-import Floor from "../components/Floor";
+import Bird from "./Bird";
+import Floor from "./Floor";
 import { Dimensions } from "react-native";
-import Obstacle from "../components/Obstacle";
+import Obstacle from "./Obstacle";
 import { getPipeSizeAndPos } from "../utils/random";
 
 const { width, height } = Dimensions.get("window");
