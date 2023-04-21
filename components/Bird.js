@@ -1,6 +1,9 @@
 import Matter from "matter-js";
 import React from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
+import birdImg from "../assets/birdImg.png";
+import birdImg2 from "../assets/birdImg2.png";
+import birdImg3 from "../assets/birdImg3.png";
 
 const Bird = (props) => {
   const widthBody = props.body.bounds.max.x - props.body.bounds.min.x;
@@ -8,26 +11,26 @@ const Bird = (props) => {
 
   const xBody = props.body.position.x - widthBody / 2;
   const yBody = props.body.position.y - heightBody / 2;
+  const pose = props.pose;
 
-  const color = props.color;
+  const images = [birdImg, birdImg2, birdImg3];
 
   return (
     <View
       style={{
-        borderWidth: 1,
-        borderColor: color,
-        borderStyle: "solid",
         position: "absolute",
         left: xBody,
         top: yBody,
         width: widthBody,
         height: heightBody,
       }}
-    />
+    >
+      <Image source={images[pose]} style={{ width: 60, height: 50 }} />
+    </View>
   );
 };
 
-export default (world, color, pos, size) => {
+export default (world, pose, pos, size) => {
   const initialBird = Matter.Bodies.rectangle(
     pos.x,
     pos.y,
@@ -39,7 +42,7 @@ export default (world, color, pos, size) => {
 
   return {
     body: initialBird,
-    color,
+    pose,
     pos,
     renderer: <Bird />,
   };

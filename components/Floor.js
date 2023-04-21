@@ -1,6 +1,7 @@
 import Matter from "matter-js";
 import React from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
+import floorImg from "../assets/floor.png";
 
 const Floor = (props) => {
   const widthBody = props.body.bounds.max.x - props.body.bounds.min.x;
@@ -8,8 +9,6 @@ const Floor = (props) => {
 
   const xBody = props.body.position.x - widthBody / 2;
   const yBody = props.body.position.y - heightBody / 2;
-
-  const color = props.color;
 
   return (
     <View
@@ -19,13 +18,14 @@ const Floor = (props) => {
         top: yBody,
         width: widthBody,
         height: heightBody,
-        backgroundColor: color,
       }}
-    />
+    >
+      <Image source={floorImg} style={{ width: widthBody * 2, height: 40 }} />
+    </View>
   );
 };
 
-export default (world, color, pos, size) => {
+export default (world, pos, size) => {
   const initialFloor = Matter.Bodies.rectangle(
     pos.x,
     pos.y,
@@ -37,7 +37,6 @@ export default (world, color, pos, size) => {
 
   return {
     body: initialFloor,
-    color,
     pos,
     renderer: <Floor />,
   };

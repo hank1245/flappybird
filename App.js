@@ -1,10 +1,20 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import entities from "./entities";
 import Physics from "./physics";
 import { useEffect, useRef, useState } from "react";
 import * as _ from "lodash";
+import backgroundImg from "./assets/backgroundImg.png";
+
+const { width, height } = Dimensions.get("window");
 
 export default function App() {
   const [running, setRunning] = useState(false);
@@ -15,7 +25,7 @@ export default function App() {
   }, []);
   const debounced = _.debounce((e) => {
     switch (e.type) {
-      case "game over":
+      case "game_over":
         setRunning(false);
         engineRef.current.stop();
         break;
@@ -29,6 +39,11 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
+      <Image
+        source={backgroundImg}
+        style={styles.backgroundImage}
+        resizeMode="stretch"
+      />
       <GameEngine
         ref={engineRef}
         entities={entities()}
@@ -74,3 +89,15 @@ export default function App() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  backgroundImage: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: width,
+    height: height,
+  },
+});

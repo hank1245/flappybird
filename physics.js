@@ -3,6 +3,9 @@ import { getPipeSizeAndPos } from "./utils/random";
 import { Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
+let tick = 0;
+let pose = 1;
+
 const physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
   touches
@@ -41,11 +44,32 @@ const physics = (entities, { touches, time, dispatch }) => {
       y: 0,
     });
   }
+
+  if (entities["Floor"].body.bounds.max.x / 2 <= 0) {
+    Matter.Body.setPosition(entities["Floor"].body, {
+      x: width / 2,
+      y: height - 20,
+    });
+  }
+
+  Matter.Body.translate(entities["Floor"].body, {
+    x: -3,
+    y: 0,
+  });
   Matter.Events.on(engine, "collisionStart", (e) => {
-    dispatch({ type: "game over" });
+    dispatch({ type: "game_over" });
   });
 
   Matter.Engine.update(engine, time.delta);
+  tick += 1;
+  if (tick % 5 === 0) {
+    pose = pose + 1;
+    if (pose > 2) {
+      pose = 0;
+    }
+    entities.Bird.pose = pose;
+  }
+
   return entities;
 };
 

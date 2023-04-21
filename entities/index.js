@@ -16,18 +16,21 @@ export default (restart) => {
 
   return {
     physics: { engine, world },
-    Bird: Bird(world, "green", { x: 50, y: 300 }, { height: 40, width: 40 }),
+    Bird: Bird(world, 1, { x: 50, y: 300 }, { height: 40, width: 40 }),
     ObstacleTop1: Obstacle(
       world,
       "ObstacleTop1",
-      "red",
       pipeSizeAndPos1.pipeTop.pos,
       pipeSizeAndPos1.pipeTop.size
+    ),
+    Floor: Floor(
+      world,
+      { x: width / 2, y: height - 20 },
+      { height: 40, width }
     ),
     ObstacleBottom1: Obstacle(
       world,
       "ObstacleBottom1",
-      "red",
       pipeSizeAndPos1.pipeBottom.pos,
       pipeSizeAndPos1.pipeBottom.size
     ),
@@ -35,22 +38,14 @@ export default (restart) => {
     ObstacleTop2: Obstacle(
       world,
       "ObstacleTop2",
-      "red",
       pipeSizeAndPos2.pipeTop.pos,
       pipeSizeAndPos2.pipeTop.size
     ),
     ObstacleBottom2: Obstacle(
       world,
       "ObstacleBottom2",
-      "red",
       pipeSizeAndPos2.pipeBottom.pos,
       pipeSizeAndPos2.pipeBottom.size
-    ),
-    Floor: Floor(
-      world,
-      "green",
-      { x: width / 2, y: height - 20 },
-      { height: 40, width }
     ),
   };
 };
