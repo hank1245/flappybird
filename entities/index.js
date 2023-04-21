@@ -16,7 +16,7 @@ export default (restart) => {
 
   return {
     physics: { engine, world },
-    Bird: Bird(world, 1, { x: 50, y: 300 }, { height: 40, width: 40 }),
+    Bird: Bird(world, 2, { x: 50, y: 300 }, { height: 40, width: 40 }),
     ObstacleTop1: Obstacle(
       world,
       "ObstacleTop1",

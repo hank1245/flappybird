@@ -4,17 +4,22 @@ import { Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 let tick = 0;
-let pose = 1;
+let pose = 2;
+let moving = false;
 
 const physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
   touches
     .filter((t) => t.type === "press")
     .forEach((t) => {
+      moving = true;
       Matter.Body.setVelocity(entities.Bird.body, {
         x: 0,
         y: -8,
       });
+      setTimeout(() => {
+        moving = false;
+      }, 300);
     });
 
   for (let index = 1; index <= 2; index++) {
@@ -61,15 +66,18 @@ const physics = (entities, { touches, time, dispatch }) => {
   });
 
   Matter.Engine.update(engine, time.delta);
-  tick += 1;
-  if (tick % 5 === 0) {
-    pose = pose + 1;
-    if (pose > 2) {
-      pose = 0;
+  if (moving) {
+    tick += 1;
+    if (tick % 5 === 0) {
+      pose = pose + 1;
+      if (pose > 2) {
+        pose = 0;
+      }
+      entities.Bird.pose = pose;
     }
-    entities.Bird.pose = pose;
+  } else {
+    entities.Bird.pose = 2;
   }
-
   return entities;
 };
 

@@ -2,7 +2,7 @@
   "expo": {
     "name": "flappybird",
     "slug": "flappybird",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "package": "com.hank1245.flappybird"
     },
     "extra": {
