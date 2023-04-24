@@ -35,6 +35,7 @@ export default function App() {
   const [error, setError] = useState();
   const [currentPoint, setCurrentPoint] = useState(0);
   const [highestPoint, setHighestPoint] = useState(0);
+  const [showRank, setShowRank] = useState(false);
   const engineRef = useRef();
   const userRef = collection(firestore, "user");
 
@@ -163,6 +164,9 @@ export default function App() {
               START GAME
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.rank}>See Rank</Text>
+          </TouchableOpacity>
         </View>
       ) : null}
     </View>
@@ -213,6 +217,12 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
     fontSize: 28,
+    fontWeight: 700,
+  },
+  rank: {
+    marginTop: 30,
+    marginLeft: 120,
+    fontSize: 30,
     fontWeight: 700,
   },
 });
