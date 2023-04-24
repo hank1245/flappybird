@@ -13,7 +13,7 @@ import Physics from "./physics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as _ from "lodash";
 import backgroundImg from "./assets/backgroundImg.png";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "./firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput } from "react-native";
@@ -22,18 +22,29 @@ const { width, height } = Dimensions.get("window");
 
 export default function App() {
   const [running, setRunning] = useState(false);
-  const [name, setName] = useState(null);
+  const [name, setName] = useState("");
   const [input, setInput] = useState("");
+  const [error, setError] = useState();
   const engineRef = useRef();
   const [currentPoints, setCurrentPoints] = useState(0);
   const loadName = async () => {
     const name = await AsyncStorage.getItem("@name");
+    await AsyncStorage.removeItem("@name");
     if (name) setName(name);
   };
   const saveName = async () => {
     if (input.length > 2) {
-      await AsyncStorage.setItem("@name", JSON.stringify(input));
-      setName(input);
+      const userRef = collection(firestore, "user");
+      const q = query(userRef, where("name", "==", `${input}`));
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.docs.length === 0) {
+        await AsyncStorage.setItem("@name", JSON.stringify(input));
+        setName(input);
+      } else {
+        setError("이미 존재하는 이름입니다.");
+      }
+    } else {
+      setError("3글자 이상으로 작성해주세요.");
     }
   };
   useEffect(() => {
@@ -41,14 +52,16 @@ export default function App() {
     loadName();
   }, [name]);
 
-  const savePoints = useCallback(() => {
+  const savePoints = useCallback(async () => {
     setRunning(false);
     engineRef.current.stop();
-    const _name = name.substring(1, name.length - 1);
-    addDoc(collection(firestore, "point"), {
-      _name,
-      point: currentPoints,
-    });
+    if (name.length > 2) {
+      const _name = name.substring(1, name.length - 1);
+      addDoc(collection(firestore, "user"), {
+        name: _name,
+        point: currentPoints,
+      });
+    }
   }, [currentPoints, name]);
 
   const debounced = _.debounce((e) => {
@@ -102,6 +115,7 @@ export default function App() {
             placeholder={"Name"}
             style={styles.input}
           />
+          {error && <Text style={styles.error}>{error}</Text>}
         </View>
       ) : !running ? (
         <View
@@ -162,5 +176,10 @@ const styles = StyleSheet.create({
     right: 0,
     width: width,
     height: height,
+  },
+  error: {
+    fontSize: 20,
+    fontWeight: 700,
+    color: "red",
   },
 });
