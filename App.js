@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import entities from "./entities";
-import Physics from "./physics";
+import Physics, { level } from "./physics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as _ from "lodash";
 import backgroundImg from "./assets/backgroundImg.png";

@@ -41,7 +41,7 @@ const physics = (entities, { touches, time, dispatch }) => {
         pipeSizePos.pipeBottom.pos
       );
       count += 1;
-      if (count % 5 === 0) level += 1;
+      if (count % 4 === 0) level += 1;
     }
 
     Matter.Body.translate(entities[`ObstacleTop${index}`].body, {
@@ -62,10 +62,12 @@ const physics = (entities, { touches, time, dispatch }) => {
   }
 
   Matter.Body.translate(entities["Floor"].body, {
-    x: -3,
+    x: -3 - level,
     y: 0,
   });
   Matter.Events.on(engine, "collisionStart", (e) => {
+    level = 0;
+    count = 0;
     dispatch({ type: "game_over" });
   });
 
