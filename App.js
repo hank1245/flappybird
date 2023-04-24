@@ -33,13 +33,21 @@ export default function App() {
   const [name, setName] = useState("");
   const [input, setInput] = useState("");
   const [error, setError] = useState();
-  const [currentPoints, setCurrentPoints] = useState(0);
+  const [currentPoint, setCurrentPoint] = useState(0);
+  const [highestPoint, setHighestPoint] = useState(0);
   const engineRef = useRef();
   const userRef = collection(firestore, "user");
 
   const loadName = async () => {
     const name = await AsyncStorage.getItem("@name");
-    if (name) setName(name);
+    if (name) {
+      setName(name);
+      const _name = name.substring(1, name.length - 1);
+      const q = query(userRef, where("name", "==", `${_name}`));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs[0].data();
+      setHighestPoint(data["point"]);
+    }
   };
 
   const saveName = async () => {
@@ -68,12 +76,13 @@ export default function App() {
     const q = query(userRef, where("name", "==", `${_name}`));
     const querySnapshot = await getDocs(q);
     const data = querySnapshot.docs[0].data();
-    if (data["point"] < currentPoints) {
+    if (data["point"] < currentPoint) {
       const docId = querySnapshot.docs[0].id;
       const userDocRef = doc(userRef, docId);
-      updateDoc(userDocRef, { point: currentPoints });
+      updateDoc(userDocRef, { point: currentPoint });
+      setHighestPoint(currentPoint);
     }
-  }, [currentPoints, name]);
+  }, [currentPoint, name]);
 
   const debounced = _.debounce((e) => {
     switch (e.type) {
@@ -81,7 +90,7 @@ export default function App() {
         savePoints();
         break;
       case "new_point":
-        setCurrentPoints(currentPoints + 1);
+        setCurrentPoint(currentPoint + 1);
         break;
       default:
         break;
@@ -91,7 +100,7 @@ export default function App() {
   useEffect(() => {
     setRunning(false);
     loadName();
-  }, [name]);
+  }, [name, highestPoint]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -118,8 +127,9 @@ export default function App() {
           margin: 20,
         }}
       >
-        {currentPoints}
+        {currentPoint}
       </Text>
+      <Text style={styles.highest}>최고점수 : {highestPoint}</Text>
       {!name ? (
         <View style={styles.init}>
           <Text style={styles.text}>Enter Name</Text>
@@ -144,7 +154,7 @@ export default function App() {
               paddingVertical: 10,
             }}
             onPress={() => {
-              setCurrentPoints(0);
+              setCurrentPoint(0);
               setRunning(true);
               engineRef.current.swap(entities());
             }}
@@ -197,5 +207,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
     color: "red",
+  },
+  highest: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    fontSize: 28,
+    fontWeight: 700,
   },
 });
