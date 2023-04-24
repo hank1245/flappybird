@@ -6,6 +6,8 @@ const { width, height } = Dimensions.get("window");
 let tick = 0;
 let pose = 0;
 let moving = false;
+let level = 0;
+let count = 0;
 
 const physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
@@ -38,14 +40,16 @@ const physics = (entities, { touches, time, dispatch }) => {
         entities[`ObstacleBottom${index}`].body,
         pipeSizePos.pipeBottom.pos
       );
+      count += 1;
+      if (count % 5 === 0) level += 1;
     }
 
     Matter.Body.translate(entities[`ObstacleTop${index}`].body, {
-      x: -3,
+      x: -3 - level,
       y: 0,
     });
     Matter.Body.translate(entities[`ObstacleBottom${index}`].body, {
-      x: -3,
+      x: -3 - level,
       y: 0,
     });
   }
