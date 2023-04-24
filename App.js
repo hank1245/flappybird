@@ -28,7 +28,6 @@ export default function App() {
   const [currentPoints, setCurrentPoints] = useState(0);
   const loadName = async () => {
     const name = await AsyncStorage.getItem("@name");
-    console.log(name);
     if (name) setName(name);
   };
   const saveName = async () => {
@@ -43,14 +42,14 @@ export default function App() {
   }, [name]);
 
   const savePoints = useCallback(() => {
-    console.log(name);
     setRunning(false);
     engineRef.current.stop();
+    const _name = name.substring(1, name.length - 1);
     addDoc(collection(firestore, "point"), {
-      name,
+      _name,
       point: currentPoints,
     });
-  }, [currentPoints]);
+  }, [currentPoints, name]);
 
   const debounced = _.debounce((e) => {
     switch (e.type) {

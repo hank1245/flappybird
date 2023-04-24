@@ -34,7 +34,11 @@ const Bird = (props) => {
     >
       <Animated.Image
         source={images[pose]}
-        style={{ width: 60, height: 50, transform: [{ rotate: rotation }] }}
+        style={{
+          width: 60,
+          height: pose === 0 ? 35 : 40,
+          transform: [{ rotate: rotation }],
+        }}
       />
     </View>
   );

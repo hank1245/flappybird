@@ -4,7 +4,7 @@ import { Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 let tick = 0;
-let pose = 2;
+let pose = 0;
 let moving = false;
 
 const physics = (entities, { touches, time, dispatch }) => {
@@ -76,7 +76,7 @@ const physics = (entities, { touches, time, dispatch }) => {
       entities.Bird.pose = pose;
     }
   } else {
-    entities.Bird.pose = 2;
+    entities.Bird.pose = 0;
   }
   return entities;
 };
