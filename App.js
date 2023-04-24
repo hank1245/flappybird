@@ -13,7 +13,15 @@ import Physics from "./physics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as _ from "lodash";
 import backgroundImg from "./assets/backgroundImg.png";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { firestore } from "./firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TextInput } from "react-native";
@@ -25,21 +33,26 @@ export default function App() {
   const [name, setName] = useState("");
   const [input, setInput] = useState("");
   const [error, setError] = useState();
-  const engineRef = useRef();
   const [currentPoints, setCurrentPoints] = useState(0);
+  const engineRef = useRef();
+  const userRef = collection(firestore, "user");
+
   const loadName = async () => {
     const name = await AsyncStorage.getItem("@name");
-    await AsyncStorage.removeItem("@name");
     if (name) setName(name);
   };
+
   const saveName = async () => {
     if (input.length > 2) {
-      const userRef = collection(firestore, "user");
       const q = query(userRef, where("name", "==", `${input}`));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.docs.length === 0) {
         await AsyncStorage.setItem("@name", JSON.stringify(input));
         setName(input);
+        addDoc(collection(firestore, "user"), {
+          name: input,
+          point: 0,
+        });
       } else {
         setError("이미 존재하는 이름입니다.");
       }
@@ -47,20 +60,18 @@ export default function App() {
       setError("3글자 이상으로 작성해주세요.");
     }
   };
-  useEffect(() => {
-    setRunning(false);
-    loadName();
-  }, [name]);
 
   const savePoints = useCallback(async () => {
     setRunning(false);
     engineRef.current.stop();
-    if (name.length > 2) {
-      const _name = name.substring(1, name.length - 1);
-      addDoc(collection(firestore, "user"), {
-        name: _name,
-        point: currentPoints,
-      });
+    const _name = name.substring(1, name.length - 1);
+    const q = query(userRef, where("name", "==", `${_name}`));
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs[0].data();
+    if (data["point"] < currentPoints) {
+      const docId = querySnapshot.docs[0].id;
+      const userDocRef = doc(userRef, docId);
+      updateDoc(userDocRef, { point: currentPoints });
     }
   }, [currentPoints, name]);
 
@@ -76,6 +87,11 @@ export default function App() {
         break;
     }
   }, 50);
+
+  useEffect(() => {
+    setRunning(false);
+    loadName();
+  }, [name]);
 
   return (
     <View style={{ flex: 1 }}>
