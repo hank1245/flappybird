@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import {
   Dimensions,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,15 +10,18 @@ import {
 } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import entities from "./entities";
-import Physics, { level } from "./physics";
+import Physics from "./physics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as _ from "lodash";
 import backgroundImg from "./assets/backgroundImg.png";
+import { Entypo } from "@expo/vector-icons";
 import {
   addDoc,
   collection,
   doc,
   getDocs,
+  limit,
+  orderBy,
   query,
   updateDoc,
   where,
@@ -36,6 +40,7 @@ export default function App() {
   const [currentPoint, setCurrentPoint] = useState(0);
   const [highestPoint, setHighestPoint] = useState(0);
   const [showRank, setShowRank] = useState(false);
+  const [ranksData, setRanksData] = useState([]);
   const engineRef = useRef();
   const userRef = collection(firestore, "user");
 
@@ -43,11 +48,8 @@ export default function App() {
     const name = await AsyncStorage.getItem("@name");
     if (name) {
       setName(name);
-      const _name = name.substring(1, name.length - 1);
-      const q = query(userRef, where("name", "==", `${_name}`));
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs[0].data();
-      setHighestPoint(data["point"]);
+      const p = await AsyncStorage.getItem("@point");
+      setHighestPoint(JSON.parse(p));
     }
   };
 
@@ -82,8 +84,18 @@ export default function App() {
       const userDocRef = doc(userRef, docId);
       updateDoc(userDocRef, { point: currentPoint });
       setHighestPoint(currentPoint);
+      await AsyncStorage.setItem("@point", JSON.stringify(currentPoint));
     }
   }, [currentPoint, name]);
+
+  const getRanks = async () => {
+    setShowRank(true);
+    const ranksArr = [];
+    const q = query(userRef, orderBy("point", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.docs.forEach((doc) => ranksArr.push(doc.data()));
+    setRanksData(ranksArr);
+  };
 
   const debounced = _.debounce((e) => {
     switch (e.type) {
@@ -133,13 +145,13 @@ export default function App() {
       <Text style={styles.highest}>최고점수 : {highestPoint}</Text>
       {!name ? (
         <View style={styles.init}>
-          <Text style={styles.text}>Enter Name</Text>
+          <Text style={styles.text}>Enter Nickname</Text>
           <TextInput
             returnKeyType="done"
             onSubmitEditing={saveName}
             onChangeText={(payload) => setInput(payload)}
             value={input}
-            placeholder={"Name"}
+            placeholder={"Nickname"}
             style={styles.input}
           />
           {error && <Text style={styles.error}>{error}</Text>}
@@ -164,11 +176,34 @@ export default function App() {
               START GAME
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={getRanks}>
             <Text style={styles.rank}>See Rank</Text>
           </TouchableOpacity>
         </View>
       ) : null}
+      {showRank && (
+        <View style={styles.rankList}>
+          <View style={styles.cross}>
+            <TouchableOpacity onPress={() => setShowRank(false)}>
+              <Entypo name="cross" size={48} color="white" />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <Text style={styles.title}>Rank</Text>
+            {ranksData &&
+              ranksData.map((data, idx) => {
+                return (
+                  <View key={idx} style={styles.row}>
+                    <Text style={styles.user}>
+                      {idx + 1}. {data.name}
+                    </Text>
+                    <Text style={styles.user}>{data.point}</Text>
+                  </View>
+                );
+              })}
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -224,5 +259,37 @@ const styles = StyleSheet.create({
     marginLeft: 120,
     fontSize: 30,
     fontWeight: 700,
+  },
+  rankList: {
+    width: 400,
+    height: 500,
+    backgroundColor: "rgba(60,60,60,1)",
+    position: "absolute",
+    top: height / 2 - 250,
+    left: width / 2 - 200,
+    borderRadius: 22,
+  },
+  cross: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    width: 50,
+    height: 50,
+  },
+  title: {
+    fontSize: 54,
+    color: "white",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  row: {
+    flexDirection: "row",
+    paddingHorizontal: 50,
+    marginTop: 8,
+    justifyContent: "space-between",
+  },
+  user: {
+    color: "white",
+    fontSize: 24,
   },
 });
