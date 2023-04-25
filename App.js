@@ -266,10 +266,13 @@ const styles = StyleSheet.create({
     fontWeight: 700,
   },
   rank: {
-    marginTop: 15,
-    marginLeft: 100,
-    fontSize: 26,
+    marginTop: 25,
+    marginLeft: 105,
+    fontSize: 20,
+    padding: 5,
     fontWeight: 700,
+    borderColor: "black",
+    borderWidth: 2,
   },
   rankList: {
     width: 360,
