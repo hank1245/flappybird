@@ -183,13 +183,24 @@ export default function App() {
       ) : null}
       {showRank && (
         <View style={styles.rankList}>
-          <View style={styles.cross}>
-            <TouchableOpacity onPress={() => setShowRank(false)}>
-              <Entypo name="cross" size={48} color="white" />
-            </TouchableOpacity>
-          </View>
           <View>
-            <Text style={styles.title}>Rank</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.title}>Rank</Text>
+              <Pressable
+                onPress={() => {
+                  setShowRank(false);
+                }}
+                style={{ position: "relative", right: -80 }}
+              >
+                <Entypo name="cross" size={48} color="orange" />
+              </Pressable>
+            </View>
             {ranksData &&
               ranksData.map((data, idx) => {
                 return (
@@ -269,18 +280,10 @@ const styles = StyleSheet.create({
     left: width / 2 - 200,
     borderRadius: 22,
   },
-  cross: {
-    position: "absolute",
-    right: 10,
-    top: 10,
-    width: 50,
-    height: 50,
-  },
   title: {
     fontSize: 54,
     color: "white",
-    textAlign: "center",
-    marginBottom: 5,
+    marginLeft: 50,
   },
   row: {
     flexDirection: "row",
