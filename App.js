@@ -142,7 +142,7 @@ export default function App() {
       >
         {currentPoint}
       </Text>
-      <Text style={styles.highest}>최고점수 : {highestPoint}</Text>
+      <Text style={styles.highest}>최고기록 : {highestPoint}</Text>
       {!name ? (
         <View style={styles.init}>
           <Text style={styles.text}>Enter Nickname</Text>
@@ -173,11 +173,11 @@ export default function App() {
             }}
           >
             <Text style={{ fontWeight: "bold", color: "white", fontSize: 30 }}>
-              START GAME
+              게임 시작!
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={getRanks}>
-            <Text style={styles.rank}>See Rank</Text>
+            <Text style={styles.rank}>순위 보기</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -191,7 +191,7 @@ export default function App() {
                 alignItems: "center",
               }}
             >
-              <Text style={styles.title}>Rank</Text>
+              <Text style={styles.title}>순위</Text>
               <Pressable
                 onPress={() => {
                   setShowRank(false);
@@ -260,24 +260,24 @@ const styles = StyleSheet.create({
   },
   highest: {
     position: "absolute",
-    top: 10,
-    left: 10,
-    fontSize: 28,
+    top: 5,
+    left: 5,
+    fontSize: 20,
     fontWeight: 700,
   },
   rank: {
-    marginTop: 30,
-    marginLeft: 120,
-    fontSize: 30,
+    marginTop: 15,
+    marginLeft: 100,
+    fontSize: 26,
     fontWeight: 700,
   },
   rankList: {
-    width: 400,
-    height: 500,
+    width: 360,
+    height: 480,
     backgroundColor: "rgba(60,60,60,1)",
     position: "absolute",
-    top: height / 2 - 250,
-    left: width / 2 - 200,
+    top: height / 2 - 240,
+    left: width / 2 - 180,
     borderRadius: 22,
   },
   title: {

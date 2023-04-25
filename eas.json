@@ -8,21 +8,29 @@
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "ios": {
         "resourceClass": "m-medium"
-      }
+      },
+
+      "channel": "production"
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "pc-api-6087411985425833685-290-d1148033dde2.json"
+      }
+    }
   }
 }
