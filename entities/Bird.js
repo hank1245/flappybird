@@ -1,12 +1,15 @@
-import Matter from "matter-js";
-import React from "react";
+import React, { useRef } from "react";
 import { Image, View, Animated } from "react-native";
+import Matter from "matter-js";
 import birdImg from "../assets/birdImg.png";
 import birdImg2 from "../assets/birdImg2.png";
 import birdImg3 from "../assets/birdImg3.png";
 
 const Bird = (props) => {
-  const animatedValue = new Animated.Value(props.body.velocity.y);
+  // Use a ref so the animated value isn't recreated on each render.
+  const animatedValue = useRef(
+    new Animated.Value(props.body.velocity.y)
+  ).current;
   const widthBody = props.body.bounds.max.x - props.body.bounds.min.x;
   const heightBody = props.body.bounds.max.y - props.body.bounds.min.y;
 

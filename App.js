@@ -12,7 +12,7 @@ import { GameEngine } from "react-native-game-engine";
 import entities from "./entities";
 import Physics from "./physics";
 import { useCallback, useEffect, useRef, useState } from "react";
-import * as _ from "lodash";
+import _ from "lodash";
 import backgroundImg from "./assets/backgroundImg.png";
 import { Entypo } from "@expo/vector-icons";
 import {
@@ -97,18 +97,27 @@ export default function App() {
     setRanksData(ranksArr);
   };
 
-  const debounced = _.debounce((e) => {
-    switch (e.type) {
-      case "game_over":
-        savePoints();
-        break;
-      case "new_point":
-        setCurrentPoint(currentPoint + 1);
-        break;
-      default:
-        break;
-    }
-  }, 50);
+  const debounced = useCallback(
+    _.debounce((e) => {
+      switch (e.type) {
+        case "game_over":
+          savePoints();
+          break;
+        case "new_point":
+          setCurrentPoint((prev) => prev + 1);
+          break;
+        default:
+          break;
+      }
+    }, 50),
+    [savePoints]
+  );
+
+  useEffect(() => {
+    return () => {
+      debounced.cancel();
+    };
+  }, [debounced]);
 
   useEffect(() => {
     setRunning(false);
